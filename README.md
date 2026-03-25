@@ -2,7 +2,7 @@
 
 ## Overview
 
-Implemented and verified a synchronous FIFO using a basic SystemVerilog testbench (non-UVM) to understand core DV concepts: stimulus, monitoring, and checking.
+Implemented and verified a synchronous FIFO (in Vivado) using a basic SystemVerilog testbench (non-UVM) to understand core DV concepts: stimulus, monitoring, and checking.
 
 ---
 
