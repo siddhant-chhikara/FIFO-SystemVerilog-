@@ -1,3 +1,5 @@
+Most recent update - Implemented randomisation in driver and made driver independent of dut empty and full signals.
+
 # FIFO Verification (SystemVerilog)
 
 ## Overview
