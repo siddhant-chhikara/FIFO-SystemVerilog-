@@ -9,7 +9,7 @@ localparam RUNCYCLES = 777;
     this.vif = vif;
   endfunction
   
-  logic [2:0] expcount; //Implemented internal count management to ensure data queue integrity
+  logic [2:0] expcount;
   
   typedef enum logic [1:0] {IDLE=2'b00, READ=2'b01, WRITE=2'b10, BOTH=2'b11} STATE_R;
   STATE_R STATE;
