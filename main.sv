@@ -22,6 +22,24 @@ logic [3:0] count = 0;
 assign full  = (count == FULL);
 assign empty = (count == EMPTY);
 
+//Assertion for write
+assert property (@(posedge clk)
+disable iff (rst)
+!(wr_en && full)
+);
+
+//Assertion for read
+assert property (@(posedge clk)
+disable iff (rst)
+!(rd_en && empty)
+);
+
+//Assertion for count
+assert property (@(posedge clk)
+disable iff (rst)
+count inside {[0:8]}
+);
+
 always_ff @(posedge clk) begin
 
 //RESET.
