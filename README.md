@@ -1,71 +1,77 @@
-Most recent update - Implemented randomisation in driver and made driver independent of dut empty and full signals.
-
-# FIFO Verification (SystemVerilog)
+# FIFO Design & Verification (SystemVerilog)
 
 ## Overview
 
-Implemented and verified a synchronous FIFO (in Vivado) using a basic SystemVerilog testbench (non-UVM) to understand core DV concepts: stimulus, monitoring, and checking.
+This project implements and verifies an 8×8 synchronous FIFO in SystemVerilog. The focus is not just on design, but on building a complete verification environment and ensuring correctness under randomized stress conditions.
 
 ---
 
-## FIFO Specs
+## Features
 
-* 8-bit data, depth = 8
-* Signals: `wr_en`, `rd_en`, `full`, `empty`
-* **1-cycle read latency (registered output)**
+* 8-bit data width, depth = 8
+* Registered read output (1-cycle latency)
+* Full / Empty flag generation
+* Concurrent read & write support
 
 ---
 
-## Verification Architecture
+## Verification Environment
 
 ```text
 Driver → Interface → DUT → Monitor → Scoreboard
 ```
 
-* **Driver**: Generates write/read stimulus (clocking block)
-* **Monitor**: Observes DUT signals, aligns read latency (1-cycle delay)
-* **Scoreboard**: Queue-based reference model
-
-  * write → push_back
-  * read  → pop_front + compare
+* **Driver**: Random, protocol-aware stimulus (IDLE / READ / WRITE / BOTH)
+* **Monitor**: Latency-aligned observation of DUT signals
+* **Scoreboard**: Queue-based reference model for data integrity
+* **Interface**: Clocking block for clean timing
 
 ---
 
-## Key Concepts
+## Key Techniques
 
-* **Latency alignment**: monitor delays `rd_en` to match DUT timing
-* **Blocking vs non-blocking**: `<=` used for cycle-accurate delay
-* **Transaction ≠ cycle**: valid reads = cycles − latency
-* **Separation**: DUT (design) vs TB (verification logic)
+* **Model-based stimulus** using `expected_count` (independent of DUT signals)
+* **Randomized testing** with legal operation filtering
+* **Functional coverage** (wr_en, rd_en, full, empty + cross coverage)
+* **Assertion-based verification (SVA)** for protocol correctness:
 
----
-
-## Bugs Found & Fixed
-
-* Early sampling → shifted data mismatch
-* Over-delay → skipped transactions
-* Mixing delayed control with current `empty` → last value drop
+  * No write when full
+  * No read when empty
+  * Count stays within bounds
 
 ---
 
-## Result
+## Debugging Highlights
 
-```text
-PASS: 10
-PASS: 20
-PASS: 30
-PASS: 40
-```
+* Fixed latency misalignment between `rd_en` and `rd_op`
+* Resolved scoreboard desynchronization caused by underflow
+* Eliminated DUT dependency in driver to avoid timing races
+* Focused on **first failure debugging** to identify root causes
 
 ---
 
-## Structure
+## Results
 
-```text
-main.sv        # FIFO RTL
-fifo_if.sv     # Interface
-driver.sv
-monitor.sv
-scoreboard.sv
-tb.sv
-```
+* Stable execution under **10K+ cycle randomized stress testing**
+* Zero data mismatches
+* No protocol violations
+* Verified correct FIFO ordering under all tested conditions
+
+---
+
+## Key Learnings
+
+* Verification depends on **timing correctness**, not just logic
+* Random testing reveals bugs hidden by directed tests
+* Testbench must be **independent of DUT internal timing**
+* Coverage is required to prove completeness
+
+---
+
+## Future Work
+
+* UVM-based implementation
+* Asynchronous FIFO (CDC handling)
+* Protocol-level verification (AXI / SPI)
+
+---
