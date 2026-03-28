@@ -2,7 +2,7 @@ class driver;
 
   virtual fifo_if vif;
 
-localparam RUNCYCLES = 777;
+localparam RUNCYCLES = 10001;
 
   logic [7:0] rand_ip = 0;
   function new(virtual fifo_if vif);
